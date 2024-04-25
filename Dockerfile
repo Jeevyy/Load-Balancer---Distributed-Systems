@@ -1,17 +1,20 @@
 # Use official Python runtime as a parent image
 FROM python:3.9
 
-#Set the working directory in the container
+# Set the working directory in the container
 WORKDIR /app
 
-#Copy the current directory contenst into container at /app
+# Copy the current directory contents into the container at /app
 COPY server.py /app
 
-#Install Flask
+# Install Flask
 RUN pip install Flask
 
-#Set SERVER_ID env variable
-ENV SERVER_ID "1"
+# Set SERVER_ID environment variable
+ENV SERVER_ID="1"
 
-#Run app.py when container launches
+# Expose port 6000
+EXPOSE 6000
+
+# Run server.py when the container launches
 CMD ["python", "server.py"]
