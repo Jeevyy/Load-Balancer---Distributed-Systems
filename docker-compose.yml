@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  load_balancer:
+    build: ./load_balancer
+    ports:
+      - "6000:6000"
+    environment:
+      N: 2  # Default value for the number of server containers
+      K: 20  # Default value for the number of replicas per server
+    restart: always
+
+  server_container:
+    build: ./server
+    environment:
+      FLASK_APP: server.py
+      FLASK_RUN_HOST: 0.0.0.0
+    restart: always
