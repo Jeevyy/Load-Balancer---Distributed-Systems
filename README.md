@@ -5,14 +5,14 @@
 ### TASK ONE: SERVER
 * **Endpoint (/home, method=GET)**: This endpoint returns a string with a unique identifier to distinguish among the replicated server containers. For instance, if a client requests this endpoint and the load balancer schedules the request to Server: 3, then an example return string would be Hello from Server:
 Hint: Server ID can be set as an env variable while running a container instance from the docker image of the server
-   - Command: ``` curl -X GET http://localhost:6000/home ```
-   - Response: ```{"message":"Hello from Server: 10","status":"successful"}```
+   - Command: ```curl -X GET -H "Content-type: application/json" http://localhost:5000/home```
+   - Response: ```{"message": "Hello from server_1"}}```
      
 * **Endpoint (/heartbeat, method=GET)**: This endpoint sends heartbeat responses upon request. The load balancer further
 uses the heartbeat endpoint to identify failures in the set of containers maintained by it. Therefore, you could send an empty
 response with a valid response code.
-  - Command: ```curl -X GET http://localhost:6000/heartbeat```
-  - Response: ```Response [EMPTY] ```
+  - Command: ```curl -X GET -H "Content-type: application/json" http://localhost:5000/heartbeat```
+  - Response: ```{}```
 
 ### TASK TWO: CONSISTENT HASHING
  * In this task, you need to implement a consistent hash map using an array, linked list, or any other data structure. This map data
@@ -35,26 +35,36 @@ structure details are given in Appendix A. Use the following parameters and hash
 
 ### TASK THREE: LOAD BALANCER
 * **Endpoint (/add, method=POST)**: This endpoint adds new server instances in the load balancer to scale up with increasing client numbers in the system. The endpoint expects a JSON payload that mentions the number of newinstances and their preferred hostnames (same as the container name in docker) in a list. An example request and response is below.
-  - Command: ``` curl -X POST -H "Content-Type: application/json" --data-binary "{\"n\": 6, \"hostnames\": [1, 2, 3, 4, 5, 6]}" http://localhost:6000/add ```
-  - Response: ```{"message":{"N":6,"replicas":[{"cpu_usage":0.0,"id":1,"memory_usage":27.6,"request_count":0},{"cpu_usage":0.0,"id":2,"memory_usage":27.6,"request_count":0},{"cpu_usage":0.0,"id":3,"memory_usage":27.6,"request_count":0},{"cpu_usage":0.0,"id":4,"memory_usage":27.6,"request_count":0},{"cpu_usage":0.0,"id":5,"memory_usage":27.6,"request_count":0},{"cpu_usage":0.0,"id":6,"memory_usage":27.6,"request_count":0}]},"status":"successful"}```
-  - *use of psutil library to improve the consistent hashing algorithm to load balance more efficiently amongst all the servers*
+  - Command: ``` curl -X POST -H "Content-Type: application/json" --data-binary "{\"n\": 4, \"hostnames\": [\"server11\", \"server12\", \"server13\", \"new_servers4\"]}" http://localhost:5000/add ```
+  - Response: ```{"message": {"N": 5,"replicas": ["server12","new_servers4","server_1","server11","server13"]},
+  "status": "successful"}```
   * Perform simple sanity checks on the request payload and ensure that hostnames mentioned in the Payload are less than or equal to newly added instances. Note that the hostnames are preferably set. One can never set the hostnames. In that case, the hostnames (container names) are set randomly. However, sending a hostname list with greater length than newly added instances will result in an error.
-    - Command: ``` curl -X POST -H "Content-Type: application/json" --data-binary "{\"n\": 3, \"hostnames\": [1, 2, 3, 4, 5, 6]}" http://localhost:6000/add ```
-    - Response: ```{"message":"<Error> Length of hostname list is more than newly added instances","status":"failure"}```
+    - Command: ```curl -X POST -H "Content-Type: application/json" --data-binary "{\"n\": 2, \"hostnames\": [\"server11\", \"server12\", \"server13\", \"new_servers4\"]}" http://localhost:5000/add```
+    - Response: ```{"message": "<Error> Length of hostname list is more than newly added instances","status": "failure"}```
 
 * **Endpoint (/rep, method=GET)**: This endpoint only returns the status of the replicas managed by the load balancer. The response contains the number of replicas and their hostname in the docker internal network:n1 as mentioned in Fig. 1. An example response is shown below.
-  - Command: ``` curl http://localhost:6000/rep ```
-  - Response: ```{"message":{"N":6,"replicas":[{"id":1,"id":2,"id":3,"id":4,"id":5,"id":6}]},"status":"successful"}```
+  - Command: ``` curl -X GET -H "Content-type: application/json" http://localhost:5000/rep ```
+  - Response: ```{"message": {"N": 0,"replicas": []},"status": "successful"}```
 
 * **Endpoint (/rm, method=DELETE)**: This endpoint removes server instances in the load balancer to scale down with decreasing client or system maintenance. The endpoint expects a JSON payload that mentions the number of instances to be removed and their preferred hostnames (same as container name in docker) in a list. An example request and response is below.
-  - Command: ``` curl -X DELETE -H "Content-Type: application/json" --data-binary "{\"n\": 1, \"hostnames\": [\"5\"]}" http://localhost:6000/rm ```
-  - Response: ```{"message":{"N":5,"replicas":[{"cpu_usage":0.0,"id":2,"memory_usage":27.8,"equest_count":0},{"cpu_usage":0.0,"id":3,"memory_usage":27.8,"request_count":0},{"cpu_usage":0.0,"id":4,"memory_usage":27.8,"request_count":0},{"cpu_usage":0.0,"id":5,"memory_usage":27.8,"request_count":0},{"cpu_usage":0.0,"id":6,"memory_usage":27.8,"request_count":0}]},"status":"successful"}```
-   - *shows that the sever with id '1' has been removed successfully*
+  - Command: ```curl -X POST -H "Content-Type: application/json" --data-binary "{\"n\": 2, \"hostnames\": [\"server11\", \"server12\"]
+}" http://localhost:5000/rm ```
+  - Response: ```{"message": {"N": 3,"replicas": ["new_servers4","server_1","server13"]},"status": "successful"}```
+   - *shows that the server12 and server11 have been removed successfully*
      
-* **Endpoint (/server_stats, method=GET)**: This endpoint is used to view all of the servers that are currently being used. Additonally, it provides a list of the amount each server has that aids in visualising the load balanccing. An example request and response is below.
-  - Command: ``` curl http://localhost:6000/server_stats```
-  - Response: ``` {"1":33,"2":69} ```
-  - *After adding two servers, 1 and 2, and loading 102 requests routed to ```/home```* 
+* **Endpoint (/checkpoint, method=GET)**: This endpoint is used to view all of the servers that are currently being used. Additonally, it provides a list of the amount each server has that aids in visualising the load balancing. An example request and response is below.
+  - Command: ```curl -X GET -H "Content-type: application/json" http://localhost:5000/checkpoint```
+  - Response: ```{"requests": {"new_servers4": 10,"server13": 28,"server_1": 63}, "servers": ["new_servers4","server_1","server13"]}```
+  - *Using the existing servers, "new_servers4","server_1","server13", you are able to see the distribution of requests to each server after sending 100 requests to the   ```/home``` endpoint*
+
+* **Endpoint (/graph, method=GET)**: This endpoint is used to create a bar graph using the distribution data from the ```/checkpoint``` endpoint, where the server names are on the x-axis, and the number of requests are on the y-axis. An example request and response is below.
+  - Command: ```curl -X GET -H "Content-type: application/json" -o endpoint_example.png http://localhost:5000/graph```
+  - Response: ``` % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+                  100 23576  100 23576    0     0  57646      0 --:--:-- --:--:-- --:--:-- 57784```
+  - *a new graph is created, "endpoint_example.png", that shows the distribution as seen in ```checkpoint``` data*
+     - Graph:
+        -  
  
 ### TASK FOUR: ANALYSIS
 * Launch 10000 async requests on N = 3 server containers and report the request count handled by each server instance in a bar chart. Explain your observations in the graph and your view on the performance.
@@ -101,12 +111,13 @@ structure details are given in Appendix A. Use the following parameters and hash
 
 * Finally, modify the hash functions H(i), Φ(i, j) and report the observations from (A-1) and (A-2).
   - To achieve a better distribution, the following changes were made to the consistent hashing function:
-    - Number of Server Containers managed by the load balancer (N) = 50
-    - Total number of slots in the consistent hash map (#slots) = 2500
-    - Number of virtual servers for each server container (K) = 50
+    - Number of Server Containers managed by the load balancer (N) = 3
+    - Total number of slots in the consistent hash map (#slots) = 512
+    - Number of virtual servers for each server container (K) = 20
     - Hash function for request mapping H(i) = Rid % M
     - Hash function for virtual server mapping Φ(i, j) = (Sid + i) % M
-  - Additionally, the hashing is enhanced by distributing the load based on what server has the lowest cpu percentage, thus preventing server overload
+   - Although there is still a bias towards one of the servers, the load balancer is able to effectively balance the load accross all respective servers
+   - Additionally, after closing a healthy server using the ```/rm``` endpoint, all of its previous requests are distributed amongst the existing healthy servers
  
     * Launch 10000 async requests on N = 3 server containers and report the request count handled by each server instance in a bar chart. Explain your observations in the graph and your view on the performance.
       - After adding three servers ('1', '2', '3'):
