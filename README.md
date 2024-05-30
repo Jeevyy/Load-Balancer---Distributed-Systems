@@ -95,7 +95,7 @@ structure details are given in Appendix A. Use the following parameters and hash
       - <img src="https://raw.githubusercontent.com/Jeevyy/Load-Balancer---Distributed-Systems/jeevan-develop/images/first/6%20servers.png" width="400">
   - Average load accross each server with 10,000 requests:
     - Graph:
-      - <img src="https://raw.githubusercontent.com/Jeevyy/Load-Balancer---Distributed-Systems/jeevan-develop/images/first/average.png" width="400">
+      - <img src="https://raw.githubusercontent.com/Jeevyy/Load-Balancer---Distributed-Systems/jeevan-develop/images/second/average.png" width="400">
     - Observation:
       - In the case of two servers, both servers handle a relatively similar load, with Server 1 slightly edging out Server 2.
       - This suggests a relatively balanced load distribution, although there is still room for improvement to ensure equitable resource utilization across the servers.
@@ -122,7 +122,7 @@ structure details are given in Appendix A. Use the following parameters and hash
     * Launch 10000 async requests on N = 3 server containers and report the request count handled by each server instance in a bar chart. Explain your observations in the graph and your view on the performance.
       - After adding three servers ('1', '2', '3'):
       - Graph:
-          - <img src="https://raw.githubusercontent.com/Jeevyy/Load-Balancer---Distributed-Systems/jeevan-develop/images/second/3%20servers.png" width="400">
+          - <img src="https://raw.githubusercontent.com/Jeevyy/Load-Balancer---Distributed-Systems/jeevan-develop/images/task4_a42_3servers.png" width="400">
         - Observations:
           - Server 1 consistently handles the highest load, followed by Server 2 and then Server 3. Despite minor variations, this trend remains consistent across the different server counts.
           - The performance of the load balancer appears effective in distributing the load somewhat evenly across the servers, with Server 1 consistently bearing the highest load
@@ -130,22 +130,22 @@ structure details are given in Appendix A. Use the following parameters and hash
     * Next, increment N from 2 to 6 and launch 10000 requests on each such increment. Report the average load of the servers at each run in a line chart. Explain your observations in the graph and your view on the scalability of the load balancer implementation
       - When N = 2 
         - Graph:
-          - <img src="https://raw.githubusercontent.com/Jeevyy/Load-Balancer---Distributed-Systems/jeevan-develop/images/second/2%20servers.png" width="400">
+          - <img src="https://raw.githubusercontent.com/Jeevyy/Load-Balancer---Distributed-Systems/jeevan-develop/images/task4_a42_2servers.png" width="400">
       - When N = 3 
         - Graph:
-          - <img src="https://raw.githubusercontent.com/Jeevyy/Load-Balancer---Distributed-Systems/jeevan-develop/images/second/3%20servers.png" width="400">
+          - <img src="https://raw.githubusercontent.com/Jeevyy/Load-Balancer---Distributed-Systems/jeevan-develop/images/task4_a42_3servers.png" width="400">
       - When N = 4 
         - Graph:
-          - <img src="https://raw.githubusercontent.com/Jeevyy/Load-Balancer---Distributed-Systems/jeevan-develop/images/second/4%20servers.png" width="400">
+          - <img src="https://raw.githubusercontent.com/Jeevyy/Load-Balancer---Distributed-Systems/jeevan-develop/images/task4_a42_4servers.png" width="400">
       - When N = 5 
         - Graph:
-          - <img src="https://raw.githubusercontent.com/Jeevyy/Load-Balancer---Distributed-Systems/jeevan-develop/images/second/5%20servers.png" width="400">
+          - <img src="https://raw.githubusercontent.com/Jeevyy/Load-Balancer---Distributed-Systems/jeevan-develop/images/task4_a42_5servers.png" width="400">
       - When N = 6 
         - Graph:
-          - <img src="https://raw.githubusercontent.com/Jeevyy/Load-Balancer---Distributed-Systems/jeevan-develop/images/second/6%20servers.png" width="400">
+          - <img src="https://raw.githubusercontent.com/Jeevyy/Load-Balancer---Distributed-Systems/jeevan-develop/images/task4_a42_6servers.png" width="400">
       - Average load accross each server with 10,000 requests:
         - Graph:
-          - <img src="https://raw.githubusercontent.com/Jeevyy/Load-Balancer---Distributed-Systems/jeevan-develop/images/second/average.png" width="400">
+          - <img src="https://raw.githubusercontent.com/Jeevyy/Load-Balancer---Distributed-Systems/jeevan-develop/images/first/average.png" width="400">
       - Observation:
         - In the case of two servers, Server 1 consistently handles a higher load compared to Server 2, suggesting an imbalance in the load distribution. 
         - Despite this, the load balancer demonstrates a basic ability to distribute the load across multiple servers as compared to the first consistant hashing which happened to skew more into the first two servers
