@@ -1,6 +1,16 @@
 # Load-Balancer - Distributed-Systems
 ### This repository contains the implementation of a load balancer using Docker, aimed at efficiently distributing requests among several servers. The load balancer routes requests from multiple clients asynchronously to ensure nearly even distribution of the load across the server replicas.
 
+## Installation Guide
+### Prerequisites
+Before you begin, ensure you have the following installed on your system:
+   - [Docker](https://www.docker.com/get-started)
+   - [Python 3.9+](https://www.python.org/downloads/)
+### Step-by-Step Installation Guide
+   - Clone the repository onto your Local Machine using the Command ``` git clone https://github.com/Jeevyy/Load-Balancer---Distributed-Systems```
+   - Create a Docker network for the server containers ```docker network create assign1_net1```
+   - Build the Docker image for the Flask application: ```docker build -t server_image .```
+   - Run the Load Balancer: ```docker run -d --name load_balancer -p 6000:6000 --network assign1_net1 server_image```
 ## Task Description
 ### TASK ONE: SERVER
 * **Endpoint (/home, method=GET)**: This endpoint returns a string with a unique identifier to distinguish among the replicated server containers. For instance, if a client requests this endpoint and the load balancer schedules the request to Server: 3, then an example return string would be Hello from Server:
